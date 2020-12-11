@@ -25,13 +25,24 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/:id', function(req, res, next) {
-    let id = req.params.id;
+    let id = req.params.id; 
     // 1. Получить из базы данных одного пользователя с идентификаторов id
+    PersonModel.findOne({
+        "_id": id
+    })
+    .then(function (person) {
     // 2.1 Если ошибок при получении не позникло, ответить клиенту 
     //     статуса кодом 200 и пользователя в формате JSON
-    // 2.2 Если возникла ошибка - 500 и сообщение в формате JSON, "Не удалось получить запись"
-    console.log(id);
-    res.status(200).send();
+    // 2.1.1 // Если ошибок нет, и пользователя такого нет, то ответить 404 без указания сообщения
+    if (!person) {
+        return res.status(404).send();
+    }
+    res.status(200).send(person);
+})
+    .catch(function(err) {
+        // 2.2 Если возникла ошибка - 500 и сообщение в формате JSON, "Не удалось получить запись"
+        res.status(500).send({message: "Не удалось получить запись"})
+    })
 })
 
 router.post('/', function (request, response, nextController) {
@@ -66,9 +77,5 @@ router.post('/', function (request, response, nextController) {
                 message: "Сохранение не удалось"
             });
         })
-    // if (!request.body.name || request.body.name.length == 0) {
-    //     response.status(400).send("Вы не указали имя");
-    //     return;
-    // }
-    // response.status(201).send(request.body);
 });
+
