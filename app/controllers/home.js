@@ -79,3 +79,15 @@ router.post('/', function (request, response, nextController) {
         })
 });
 
+router.delete('/:id', function (request, response, next) {
+    let id = request.params.id
+    PersonModel.deleteOne({
+        "_id": id
+    })
+    .then(function() {
+        response.status(202).send()
+    })
+    .catch(function(){
+        response.status(500).send({message: "Произвести удаление не удалось"})
+    })
+});
