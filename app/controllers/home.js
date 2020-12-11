@@ -7,6 +7,18 @@ module.exports = function (app) {
     app.use('/', router);
 };
 
+function Transform(DB) {
+    let res = {};
+    if (DB.length && DB.weigth && DB.voice && DB.waist && DB.foot) {
+        res.length = DB.length;
+        res.weigth = DB.weigth;
+        res.voice = DB.voice;
+        res.waist = DB.waist;
+        res.foot = DB.foot;
+    }
+    return res;
+}
+
 router.get('/', function (req, res, next) {
     // 1. Получить из базы данных всех пользователей
     PersonModel.find({})
@@ -49,17 +61,6 @@ router.post('/', function (request, response, nextController) {
     // 1. Получить данные из тела запроса.
     let DB = request.body;
     // 2. Из этих данных сформировать объект тех данных, которые База данных может хранить
-    function Transform(DB) {
-        let res = {};
-        if (DB.length && DB.weigth && DB.voice && DB.waist && DB.foot) {
-            res.length = DB.length;
-            res.weigth = DB.weigth;
-            res.voice = DB.voice;
-            res.waist = DB.waist;
-            res.foot = DB.foot;
-        }
-        return res;
-    }
     let res = Transform(DB);
     // 3. Сохранить в базу данных этот объект (*)
     res = new PersonModel(res);
@@ -91,3 +92,30 @@ router.delete('/:id', function (request, response, next) {
         response.status(500).send({message: "Произвести удаление не удалось"})
     })
 });
+
+router.patch('/:id', function (request, response, next) {
+    let id = request.params.id;
+    // 1. Получить данные из тела запроса.
+    let DB = request.body;
+    // 2. Из этих данных сформировать объект тех данных, которые База данных может хранить
+    DB = Transform(DB);
+    let updateData = {
+        $set: DB
+    }
+    PersonModel.findOneAndUpdate({
+        "_id": id
+    }, updateData, {
+        new: true,
+        runValidators: true
+    })
+    .then(function (person) {
+        // 2.1.1 // Если ошибок нет, и пользователя такого нет, то ответить 404 без указания сообщения
+        if (!person) {
+           return response.status(404).send()
+        }
+            response.status(200).send(person);
+    })
+    .catch(function(err) {
+        response.status(500).send({message:"Не удалось обновить запись"})
+    })
+})
