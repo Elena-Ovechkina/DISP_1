@@ -7,6 +7,7 @@ module.exports = function (app) {
     app.use('/person', router);
 };
 
+
 function Transform(DB) {
     let res = {};
     if (DB.length && DB.weigth && DB.voice && DB.waist && DB.foot) {
