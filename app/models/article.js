@@ -13,4 +13,3 @@ const PersonSchema = new Schema({
 
 
 mongoose.model('Person', PersonSchema);
-

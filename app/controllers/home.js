@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const PersonModel = mongoose.model('Person');
 
 module.exports = function (app) {
-    app.use('/', router);
+    app.use('/person', router);
 };
 
 function Transform(DB) {
@@ -81,7 +81,8 @@ router.post('/', function (request, response, nextController) {
 });
 
 router.delete('/:id', function (request, response, next) {
-    let id = request.params.id
+    let id = request.params.id;
+    console.log(`Полученный id: ${id}`);
     PersonModel.deleteOne({
         "_id": id
     })
