@@ -16,6 +16,7 @@ function Transform(DB) {
         res.voice = DB.voice;
         res.waist = DB.waist;
         res.foot = DB.foot;
+        console.log('Привет мир');
     }
     return res;
 }
