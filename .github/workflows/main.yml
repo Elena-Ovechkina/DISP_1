@@ -34,3 +34,22 @@ jobs:     # раздел задач
           heroku_app_name: server-i-lena
           #  Email владельца сервера
           heroku_email: ovechkina.elina@yandex.ru
+
+      # третий шаг - получение тестов от команды тестировщиков
+      - name: Checkout test repository
+        # инструментарий получения кода из репозитория
+        uses: actions/checkout@v2
+        with:
+          # репозиторий, из котого нужно получить код
+          repository: Elena-Ovechkina/DISP1_Tests
+          # папка(директория) в которую этот код нужно разместить
+          path: tests
+          # ветка версионного контроля из которой нужно получить код
+          ref: master
+
+      # четвертый шаг - запуск тестов относительно тестового стенда
+      - name: Run test
+        # команда запуска тестов
+        run: npm start
+        # относительно какой папки выполнить эту команду
+        working-directory: tests
